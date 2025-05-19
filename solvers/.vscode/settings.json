@@ -1,0 +1,14 @@
+{
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "files.associations": {
+        "ecFoam.C": "cpp",
+        "gacFoam.C": "cpp",
+        "DimensionedFieldFunctions.C": "cpp",
+        "anisoPorousReactionFoam.C": "cpp",
+        "pimpleNoLoopControl.C": "cpp",
+        "IOobject.C": "cpp",
+        "landfillAerationFoam_v1.4.C": "cpp",
+        "landfillAerationFoam_v1.5.C": "cpp"
+    }
+}

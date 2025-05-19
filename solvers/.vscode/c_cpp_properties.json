@@ -1,0 +1,40 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/junlong/OpenFOAM/junlong-11/src/applications/solvers/**",
+                "/home/junlong/OpenFOAM/junlong-11/src/applications/solvers/**",
+                "/home/junlong/OpenFOAM/**",
+                "/home/junlong/OpenFOAM/junlong-11/src/**"
+            ],
+            "defines": [],
+            "cStandard": "c23",
+            "cppStandard": "c++23",
+            "intelliSenseMode": "linux-gcc-x64",
+            "mergeConfigurations": false,
+            "compilerPath": "/usr/bin/g++",
+            "browse": {
+                "path": [
+                    "/home/junlong/OpenFOAM/junlong-11/src/applications/solvers/**",
+                    "/home/junlong/OpenFOAM/junlong-11/src/applications/solvers/**",
+                    "/home/junlong/OpenFOAM/**",
+                    "/home/junlong/OpenFOAM/junlong-11/src/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "GCC",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

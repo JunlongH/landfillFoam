@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "porousReactionFoam.C": "cpp",
+        "landfillAerationFoam_v1.3.C": "cpp",
+        "landfillAerationFoam_TRestrain.C": "cpp"
+    }
+}

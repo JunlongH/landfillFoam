@@ -1,0 +1,22 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I../../../libraries/porousBoundaryConditions/lnInclude \
+    -I../../../libraries/porousModels/lnInclude \
+    -I../../../libraries/toolsGIS/lnInclude \
+    -I../../../libraries/numericalMethods/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+    -I../../../libraries/gasMassDiffusionModels/lnInclude \
+    -I../../../libraries/chemicalComponents/lnInclude \
+    -I../../../libraries/biodegradation/lnInclude 
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -L$(FOAM_USER_LIBBIN) \
+    -lporousBoundaryConditions \
+    -lporousModels \
+    -ltoolsGIS \
+    -lPMFnumericalMethods \
+    -lchemicalComponents \
+    -lgasMassDiffusionModels \
+    -lbiodegradation 
