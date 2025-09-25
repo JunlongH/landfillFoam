@@ -1,0 +1,20 @@
+diffusionCoefficients/binaryDiffusionCoeff/binaryDiffusionCoeff.C
+
+diffusionCoefficients/binaryDiffusionCoeff/binaryDiffusionCoeffField.C
+
+diffusionCoefficients/porousBinaryDiffusionCoeffField/porousBinaryDiffusionCoeffField.C
+
+diffusionCoefficients/knudsenDiffusionCoeff/knudsenDiffusionCoeffField.C
+
+diffusionCoefficients/withinAirDiffusionCoeff/withinAirDiffusionCoeffField.C
+
+
+gasMassDiffusionModel/fickDiffusionModel/fickDiffusion.C
+
+gasMassDiffusionModel/maxwellStefanModel/maxwellStefan.C
+
+gasMassDiffusionModel/dustyGasModel/dustyGas.C
+LIB = $(FOAM_USER_LIBBIN)/libgasMassDiffusionModels
+
+
+

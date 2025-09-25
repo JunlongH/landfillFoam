@@ -1,0 +1,187 @@
+/*---------------------------------------------------------------------------*\
+License
+    This file is part of landfill modelling project, an extension of OpenFOAM
+    modeling landfill aeration.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+\*---------------------------------------------------------------------------*/
+
+#include "maxwellStefan.H"
+#include "fvc.H"
+
+Foam::List<Foam::tmp<Foam::surfaceScalarField>> Foam::gasMassDiffusion::maxwellStefan
+(
+    const fvMesh& mesh_,
+    gasCompositionSpace& gasCompositionSpace_,
+    const std::vector<std::vector<volScalarField>>& Dij_
+)
+{
+    /* List<tmp<surfaceScalarField>> flux_(
+        gasCompositionSpace_.nGasSpecie(),
+        surfaceScalarField
+        (
+            IOobject
+            (
+                "flux",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar("flux", dimensionSet(0,0,-1,0,1,0,0), 0.0)
+        )
+    ); //- mol/s */
+    Info << "Constructing flux field..." << endl;
+
+    const label N = gasCompositionSpace_.nGasSpecie();
+
+    List<tmp<surfaceScalarField>> flux_(N);
+
+
+
+
+
+    //- tmp for volFrac
+    List<tmp<volScalarField>> volFrac_(N); //- volFrac at cell center
+    //- tmp for molU at cell center
+    List<tmp<volVectorField>> molU_(N); //- molU at cell center
+    //- tmp for gradient of molConcentration at cell center
+    List<tmp<volVectorField>> gradMolConcentration_(N);
+
+    Info << "Constructing coefficient matrix A and constant vector b..." << endl;
+
+
+    forAll(gasCompositionSpace_.gasSpecieTable(), i)
+    {
+        word specieName_i = gasCompositionSpace_.gasSpecieNames()[i];
+
+        Info << "Specie " << specieName_i << endl;
+        volFrac_[i] = gasCompositionSpace_.gasSpecieTable()[specieName_i]->volFrac();
+
+        gradMolConcentration_[i] = fvc::grad(gasCompositionSpace_.gasSpecieTable()[specieName_i]->molConcentration());
+    
+        //- Construct molU_ field
+        molU_[i] = new volVectorField
+        (
+            IOobject
+            (
+                "molU" + specieName_i,
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedVector
+            (
+                "molU",
+                dimensionSet(0,-2,-1,0,1,0,0),
+                vector::zero
+            )
+        );
+
+        //- Construct flux_ field
+        flux_[i] = new surfaceScalarField
+        (
+            IOobject
+            (
+                "flux" + specieName_i,
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar
+            (
+                "flux",
+                dimensionSet(0,0,-1,0,1,0,0),
+                0.0
+            )
+        );
+    }
+
+
+    Info << "Solving the system of Maxwell Stefan equations." << endl;
+
+    forAll(mesh_.C(), cellI)
+    {
+        
+        //- Coefficient matrix A 
+        scalarSquareMatrix A_(N,N);
+        //- Constant vector b
+        List<vector> b_(N);
+        //- Result vector molFlux
+        List<vector> U_(N);
+
+        //- Construct the coefficient matrix A and constant vector b
+        forAll(gasCompositionSpace_.gasSpecieTable(), i)
+        {
+            if(i<N-1) //- first N-1 rows using Maxwell Stefan equation
+            {
+                word specieName_i = gasCompositionSpace_.gasSpecieNames()[i];
+                forAll(gasCompositionSpace_.gasSpecieTable(), j)
+                {
+                    word specieName_j = gasCompositionSpace_.gasSpecieNames()[j];
+                    if(i == j)
+                    {
+                        forAll(gasCompositionSpace_.gasSpecieTable(), k)
+                        {
+                            word specieName_k_ = gasCompositionSpace_.gasSpecieNames()[k];
+                            A_(i,j) += volFrac_[k]()[cellI] / Dij_[i][k][cellI];
+                        }
+                    }
+                    else
+                    {
+                        A_(i,j) = - volFrac_[i]()[cellI] / Dij_[i][j][cellI];
+                    }
+                }
+                b_[i] = - gradMolConcentration_[i]()[cellI];
+            }
+            else //- last row sum of flux equals zero
+            {
+                forAll(gasCompositionSpace_.gasSpecieTable(), j)
+                {
+                    word specieName_j = gasCompositionSpace_.gasSpecieNames()[j];
+                    A_(i,j) = 1.0;
+                }
+                b_[i] = Foam::vector::zero;
+            }
+        }
+
+        //- Solve the system of linear equations
+        Foam::solve(U_, A_, b_);
+
+        //- Reconstruct molU_ field from U_
+        forAll(gasCompositionSpace_.gasSpecieTable(), i)
+        {
+            word specieName_i = gasCompositionSpace_.gasSpecieNames()[i];
+            molU_[i].ref().ref()[cellI] = U_[i];
+        }   
+
+        //***How to construct matrix for boundary fields?***//
+    }
+
+    //- Calculate the flux
+    forAll(gasCompositionSpace_.gasSpecieTable(), i)
+    {
+        surfaceScalarField& tfluxi_ = flux_[i].ref();
+        tmp<volVectorField>& molU_i(molU_[i]);
+        tfluxi_ = fvc::flux(molU_i);
+    }
+    return flux_;
+
+}

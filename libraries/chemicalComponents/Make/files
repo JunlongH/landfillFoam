@@ -1,0 +1,11 @@
+atomicDiffusionVolumes/atomicDiffusionVolumes.C
+
+chemicalElement/element.C
+
+fluidGasSpecie/fluidGasSpecie.C
+
+gasSpecie/gasSpecie.C
+
+gasCompositionSpace/gasCompositionSpace.C
+
+LIB = $(FOAM_USER_LIBBIN)/libchemicalComponents

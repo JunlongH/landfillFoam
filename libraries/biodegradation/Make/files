@@ -1,0 +1,6 @@
+substrateDegradation/landfillBiodegradation/landfillBiodegradation.C
+substrateDegradation/landfillBiodegradation/landfillBiodegradationNew.C
+substrateDegradation/monod/monodDegradation.C
+methaneOxidation/methaneOxidation.C
+
+LIB = $(FOAM_USER_LIBBIN)/libbiodegradation
