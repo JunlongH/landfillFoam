@@ -1,7 +1,0 @@
-meanGradFixSb/meanGradFixSb.C
-darcyGradPressure/darcyGradPressure.C
-darcyGradPressureAniso/darcyGradPressureAniso.C
-eventFlux/eventFlux.C
-eventInfiltration/eventInfiltration.C
-
-LIB = $(FOAM_USER_LIBBIN)/libporousBoundaryConditions
